@@ -85,7 +85,7 @@ class Teacher:virtual public Person{
 		~Teacher(){
 			cout << "Teacher class: " << name << "destroy" <<endl;
 		}
-	private:
+	protected:
 		string subject;
 		int num;
 };
@@ -103,7 +103,7 @@ class Student:virtual public Person{
 		~Student(){
 			cout << "Student class: " << name << "destroy" <<endl;
 		}
-	private:
+	protected:
 		string major;
 		int num;
 };
@@ -132,6 +132,7 @@ class Graduate: public Teacher , public Student{
 			Tea_info();
 			Stu_info();
 			cout << "Payment : " << pays <<endl;
+			cout << "test unspecify num : " <<Student::num <<endl;
 		} 
 
 		void g_birth(){
