@@ -1,6 +1,2 @@
 Git is a version control system.
-adfasfsafasfasdfsdafasdfsda
-git aasdf
-Git is free software.
-gafasf
-afdfa
+Creating a new branch is quick and simple.
