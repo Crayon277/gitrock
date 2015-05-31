@@ -30,6 +30,9 @@ filetype off                  " required
  Plugin 'scrooloose/syntastic'
  Plugin 'a.vim'
  Plugin 'molokai'
+ Plugin 'scrooloose/nerdcommenter'
+ Plugin 'unimpaired.vim'
+ Plugin 'vim-scripts/cscope.vim'
 "
 " " All of your Plugins must be added before the following line
  call vundle#end()            " required
@@ -120,7 +123,7 @@ set completeopt=longest,menu
 """""新文件标题
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "新建.c,.h,.sh,.java文件，自动插入文件头 
-autocmd BufNewFile *.cc,*.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()" 
+autocmd BufNewFile *.py,*.cc,*.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()" 
 ""定义函数SetTitle，自动插入文件头 
 func SetTitle() 
 	"如果文件类型为.sh文件 
@@ -128,12 +131,19 @@ func SetTitle()
 		call setline(1,"\#########################################################################") 
 		call append(line("."), "\# File Name: ".expand("%")) 
 		call append(line(".")+1, "\# Author: Crayon Chaney") 
-		call append(line(".")+2, "\# mail: chenye626@gmail.com") 
+		call append(line(".")+2, "\# mail: mmmmmcclxxvii@gmail.com") 
 		call append(line(".")+3, "\# Created Time: ".strftime("%c")) 
 		call append(line(".")+4, "\#########################################################################") 
 		call append(line(".")+5, "\#!/bin/bash") 
 		call append(line(".")+6, "") 
-	else 
+
+	elseif &filetype == 'python'	
+		call setline(1,"\#!/usr/bin/python") 
+		call append(line("."), "\#-*- coding: utf-8 -*-")
+		call append(line(".")+1, "\# File Name: ".expand("%"))	
+		call append(line(".")+2, "\# Created Time: ".strftime("%c")) 
+		call append(line(".")+3, "")
+	else	
 		call setline(1, "/*************************************************************************") 
 		call append(line("."), "	> File Name: ".expand("%")) 
 		call append(line(".")+1, "	> Author: Crayon Chaney") 
@@ -152,22 +162,26 @@ func SetTitle()
 		call append(line(".")+7, "#include<stdlib.h>")
 		call append(line(".")+8, "")
 	endif
+	if &filetype == 'python'
+		call append(line(".")+4, "\__author__ = 'Crayon Chaney <mmmmmcclxxvii@gmail.com>'")
+		call append(line(".")+5, "")
+	endif
 	if &filetype == 'java'
 			call append(line(".")+6,"public class ".expand("%"))
 			call append(line(".")+7,"")
-		endif
+	endif
 	if &filetype == 'cc'
 		call append(line(".")+6, "#include<iostream>")
 		call append(line(".")+7, "using namespace std;")
 		call append(line(".")+8, "")
 	endif
 	"新建文件后，自动定位到文件末尾
-	autocmd BufNewFile * normal G
+	autocmd BufNewFile * normal !G
 endfunc 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set cursorcolumn
 "光标列移动
-hi CursorLine cterm=NONE ctermbg=darkred ctermfg=white
+hi CursorLine cterm=NONE ctermbg=1 ctermfg=white
 hi CursorColumn cterm=NONE ctermbg=darkred ctermfg=white
 
 " return OS type, eg: windows, or linux, mac, et.st..
@@ -243,7 +257,9 @@ nnoremap <leader>1 :set filetype=xhtml<CR>
 nnoremap <leader>2 :set filetype=css<CR>
 nnoremap <leader>3 :set filetype=javascript<CR>
 nnoremap <leader>4 :set filetype=php<CR>
-
+nnoremap <leader>5 :set filetype=c<CR>
+nnoremap <leader>6 :set filetype=cpp<CR>
+nnoremap <leader>7 :set filetype=python<CR>
 " set fileformats=unix,dos,mac
 " nmap <leader>fd :se fileformat=dos<CR>
 " nmap <leader>fu :se fileformat=unix<CR>
@@ -303,6 +319,54 @@ let Tlist_Enable_Fold_Column = 0
 let Tlist_Process_File_Always = 1
 let Tlist_Display_Prototype = 0
 let Tlist_Compact_Format = 1
+
+"-----------------------------------------------------------------
+"cscope setting
+"-----------------------------------------------------------------
+if has("cscope")
+		set csprg=/usr/local/bin/cscope
+		set csto=0
+		set cscopetag
+		set cst
+		set nocsverb
+		" add any database in current directory
+		if filereadable("cscope.out")
+		    cs add cscope.out
+		" else add database pointed to by environment
+		elseif $CSCOPE_DB != ""
+		    cs add $CSCOPE_DB
+		endif
+		set csverb
+		
+		nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
+		nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
+		nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>	
+		nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
+		nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
+		nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
+		nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+		nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+		 nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>	
+		 nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>	
+		 nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>	
+		 nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>	
+		 nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>	
+		 nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>	
+		 nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
+		 nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+
+		nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+		nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+		nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+		nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+		nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+		nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>	
+		nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
+		nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
+endif
 
 
 "-----------------------------------------------------------------
@@ -364,27 +428,27 @@ map <leader>dc a /* */<LEFT><LEFT><LEFT>
 " plugin – checksyntax.vim JavaScript常见语法错误检查
 " 默认快捷方式为 F5
 "-----------------------------------------------------------------
-let g:checksyntax_auto = 0 " 不自动检查
+" let g:checksyntax_auto = 0 " 不自动检查
 
 
 "-----------------------------------------------------------------
 " plugin - NeoComplCache.vim 自动补全插件
 "-----------------------------------------------------------------
-let g:AutoComplPop_NotEnableAtStartup = 1
-let g:NeoComplCache_EnableAtStartup = 1
-let g:NeoComplCache_SmartCase = 1
-let g:NeoComplCache_TagsAutoUpdate = 1
-let g:NeoComplCache_EnableInfo = 1
-let g:NeoComplCache_EnableCamelCaseCompletion = 1
-let g:NeoComplCache_MinSyntaxLength = 3
-let g:NeoComplCache_EnableSkipCompletion = 1
-let g:NeoComplCache_SkipInputTime = '0.5'
-let g:NeoComplCache_SnippetsDir = $VIMFILES.'/snippets'
-" <TAB> completion.
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-" snippets expand key
-imap <silent> <C-e> <Plug>(neocomplcache_snippets_expand)
-smap <silent> <C-e> <Plug>(neocomplcache_snippets_expand)
+" let g:AutoComplPop_NotEnableAtStartup = 1
+" let g:NeoComplCache_EnableAtStartup = 1
+" let g:NeoComplCache_SmartCase = 1
+" let g:NeoComplCache_TagsAutoUpdate = 1
+" let g:NeoComplCache_EnableInfo = 1
+" let g:NeoComplCache_EnableCamelCaseCompletion = 1
+" let g:NeoComplCache_MinSyntaxLength = 3
+" let g:NeoComplCache_EnableSkipCompletion = 1
+" let g:NeoComplCache_SkipInputTime = '0.5'
+" let g:NeoComplCache_SnippetsDir = $VIMFILES.'/snippets'
+" " <TAB> completion.
+" inoremap <expr><TAB> pumvisible() ? \<C-n>" : \<TAB>"
+" " snippets expand key
+" imap <silent> <C-e> <Plug>(neocomplcache_snippets_expand)
+" smap <silent> <C-e> <Plug>(neocomplcache_snippets_expand)
 
 
 "-----------------------------------------------------------------
@@ -409,3 +473,65 @@ smap <silent> <C-e> <Plug>(neocomplcache_snippets_expand)
 "vim-powerline
 "----------------------------------------------------------------
 let g:Powerline_symbols = 'fancy'
+
+
+"----------------------------------------------------------------
+"nerdcomment
+"----------------------------------------------------------------
+" [count]<leader>cc |NERDComComment|
+" Comment out the current line or text selected in visual mode.
+
+" [count]<leader>cn |NERDComNestedComment|
+" Same as <leader>cc but forces nesting.
+
+" [count]<leader>c |NERDComToggleComment|
+" Toggles the comment state of the selected line(s). If the topmost selected line is commented, all selected lines are uncommented and vice versa.
+
+" [count]<leader>cm |NERDComMinimalComment|
+" Comments the given lines using only one set of multipart delimiters.
+
+" [count]<leader>ci |NERDComInvertComment|
+" Toggles the comment state of the selected line(s) individually.
+
+" [count]<leader>cs |NERDComSexyComment|
+" Comments out the selected lines ``sexily''
+
+" [count]<leader>cy |NERDComYankComment|
+" Same as <leader>cc except that the commented line(s) are yanked first.
+
+" <leader>c$ |NERDComEOLComment|
+" Comments the current line from the cursor to the end of line.
+
+" <leader>cA |NERDComAppendComment|
+" Adds comment delimiters to the end of line and goes into insert mode between them.
+
+" |NERDComInsertComment|
+" Adds comment delimiters at the current cursor position and inserts between. Disabled by default.
+
+" <leader>ca |NERDComAltDelim|
+" Switches to the alternative set of delimiters.
+
+" [count]<leader>cl
+" [count]<leader>cb |NERDComAlignedComment|
+" Same as |NERDComComment| except that the delimiters are aligned down the left side (<leader>cl) or both sides (<leader>cb).
+
+" [count]<leader>cu |NERDComUncommentLine|
+" Uncomments the selected line(s).
+"
+"
+
+"----------------------------------------------------------------
+"
+"----------------------------------------------------------------
+"scrooloose/syntastic
+"----------------------------------------------------------------
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" "
+"----------------------------------------------------------------
