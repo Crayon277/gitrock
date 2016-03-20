@@ -33,6 +33,8 @@ filetype off                  " required
  Plugin 'scrooloose/nerdcommenter'
  Plugin 'unimpaired.vim'
  Plugin 'vim-scripts/cscope.vim'
+ Plugin 'mattn/webapi-vim'
+ Plugin 'mattn/gist-vim'
 "
 " " All of your Plugins must be added before the following line
  call vundle#end()            " required
