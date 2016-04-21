@@ -28,6 +28,7 @@ filetype off                  " required
 
 
  Plugin 'scrooloose/syntastic'
+ Plugin 'scrooloose/nerdtree'
  Plugin 'a.vim'
  Plugin 'molokai'
  Plugin 'scrooloose/nerdcommenter'
@@ -300,6 +301,21 @@ let javascript_enable_domhtmlcss=1
 "-----------------------------------------------------------------
 
 
+
+"-----------------------------------------------------------------
+"Plugin - scroooloose/nerdtree
+"-----------------------------------------------------------------
+autocmd vimenter * NERDTree
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+autocmd vimenter * wincmd w
+map <C-n> :NERDTreeToggle<CR>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+"
+"
+"
+
+
 "-----------------------------------------------------------------
 " plugin - taglist.vim 查看函数列表，需要ctags程序
 " F4 打开隐藏taglist窗口
@@ -380,20 +396,6 @@ endif
 " \/ 所有MarkWords的下一个 \? 所有MarkWords的上一个
 "-----------------------------------------------------------------
 
-
-"-----------------------------------------------------------------
-" plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
-" :ERDtree 打开NERD_tree :NERDtreeClose 关闭NERD_tree
-" o 打开关闭文件或者目录 t 在标签页中打开
-" T 在后台标签页中打开 ! 执行此文件
-" p 到上层目录 P 到根目录
-" K 到第一个节点 J 到最后一个节点
-" u 打开上层目录 m 显示文件系统菜单（添加、删除、移动操作）
-" r 递归刷新当前目录 R 递归刷新当前根目录
-"-----------------------------------------------------------------
-" F3 NERDTree 切换
-map <F3> :NERDTreeToggle<CR>
-imap <F3> <ESC>:NERDTreeToggle<CR>
 
 
 "-----------------------------------------------------------------
